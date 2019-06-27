@@ -57,8 +57,8 @@ for frame = startFrame:fps:endFrame
             if ~isempty(bb)
                 % feet = feetPosition(bb);
                 % fprintf('origin: %d, %d, width: %d height: %d \n' , bb(:,1), bb(:,2), bb(:,3) , bb(:,4));
-                % fprintf('%06d-%02d: %05d - %04.1f, %04.1f \n' ,frame, iCam, k, feet(1,1), feet(1,2) );
-                fprintf('%06d-%02d: %05d - %04d, %04d - %04d, %04d \n' ,frame, iCam, k, bb(:,1), bb(:,2), bb(:,3), bb(:,4));
+                % fprintf('%06d-%02d: %05d - %04.1f, %04.1f \n' ,frame, iCam, id, feet(1,1), feet(1,2) );
+                fprintf('%06d-%02d: %05d - %04d, %04d - %04d, %04d \n' ,frame, iCam, kid, bb(:,1), bb(:,2), bb(:,3), bb(:,4));
             end
             
         end
