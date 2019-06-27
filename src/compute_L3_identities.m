@@ -4,7 +4,7 @@ function compute_L3_identities(opts)
 
 filename = sprintf('%s/%s/L3-identities/L2trajectories_%s.mat',opts.experiment_root, opts.experiment_name, opts.sequence_names{opts.sequence});
     
-if opts.identities.extract_images
+if opts.identities.get_trajectory_features
     trajectories = loadL2trajectories(opts);
     trajectories = getTrajectoryFeatures(opts, trajectories);
     save(filename,'trajectories');
