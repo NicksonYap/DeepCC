@@ -16,6 +16,9 @@ tail_size = 300;
 fps       = 120;
 rois      = opts.ROIs;
 ids       = unique(trajectories(:,2));
+interval   = opts.sequence_intervals{opts.sequence};
+startFrame = interval(1);
+endFrame   = interval(end);
 
 % Convert frames to global clock
 for iCam = 1:8
