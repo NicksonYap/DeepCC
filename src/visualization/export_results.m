@@ -1,4 +1,4 @@
-function render_results(opts)
+function export_results(opts)
 % Creates a movie for each camera view to help visualize errors
 % Requires that single-camera results exists in experiment folder L2-trajectories
 
@@ -6,23 +6,22 @@ function render_results(opts)
 % IDFP - Blue
 % IDFN - Black
 tail_colors = [0 0 1; 0 1 0; 0 0 0];
-tail_size = 100;
+%tail_size = 100;
+tail_size = 1;
 
 colors = distinguishable_colors(1000);
 
-folder = 'video-results';
+folder = 'export-results';
 mkdir([opts.experiment_root, filesep, opts.experiment_name, filesep, folder]);
 
 % Load ground truth
 load(fullfile(opts.dataset_path, 'ground_truth', 'trainval.mat'));
 
-% Render one video per camera
+% Create one export per camera
 for iCam = 1:opts.num_cam
     
-    % Create video
-    filename = sprintf('%s/%s/%s/cam%d_%s.mp4',opts.experiment_root, opts.experiment_name, folder, iCam, opts.sequence_names{opts.sequence});
-    video = VideoWriter(filename, 'MPEG-4');
-    open(video);
+    % Create csv
+    filename = sprintf('%s/%s/%s/cam%d_%s.csv',opts.experiment_root, opts.experiment_name, folder, iCam, opts.sequence_names{opts.sequence});
     
     % Load result
     predMat = dlmread(sprintf('%s/%s/L2-trajectories/cam%d_%s.txt',opts.experiment_root, opts.experiment_name, iCam,opts.sequence_names{opts.sequence}));
@@ -44,55 +43,59 @@ for iCam = 1:opts.num_cam
     predMatViz = sortrows(predMatViz, [1 2]);
 
     for iFrame = global2local(opts.start_frames(iCam), sequence_interval(1)):1:global2local(opts.start_frames(iCam),sequence_interval(end))
-        fprintf('Cam %d:  %d/%d\n', iCam, iFrame, global2local(opts.start_frames(iCam),sequence_interval(end)));
+        % fprintf('Cam %d:  %d/%d\n', iCam, iFrame, global2local(opts.start_frames(iCam),sequence_interval(end)));
         if mod(iFrame,5) >0
             continue;
         end
-        image  = opts.reader.getFrame(iCam,iFrame);
-
+        
+        % Tail Pred (IDTP & IDFP)
+        
         rows        = find(predMatViz(:, 1) == iFrame);
         identities  = predMatViz(rows, 2);
-        positions   = [predMatViz(rows, 3),  predMatViz(rows, 4), predMatViz(rows, 5), predMatViz(rows, 6)];
+        positions   = predMatViz(rows,3:6);
+        is_TP       = predMatViz(rows,end);
         
-        if ~isempty(positions)
-            image = insertObjectAnnotation(image,'rectangle', ...
-                positions, identities,'TextBoxOpacity', 0.8, 'FontSize', 16, 'Color', 255*colors(identities,:) );
+        [num_of_id, dontcare] = size(identities);
+        [num_of_pos, dontcare] = size(positions);
+            
+        if ~isempty(positions) && num_of_id == num_of_pos
+            for index = 1:num_of_pos
+                identity = identities(index);
+                position = positions(index,:);
+                
+                is_true_postive = "IDFP";
+                
+                if is_TP(index) == 1
+                    is_true_postive = "IDTP";
+                end
+                
+                fprintf('%06d-%02d: %05d - %04.0f, %04.0f - %04.0f, %04.0f - %s \n' ,iFrame, iCam, identity, position(:,1), position(:,2), position(:,3), position(:,4), is_true_postive );
+            end
         end
         
-        % Tail Pred
-        rows = find((predMatViz(:, 1) <= iFrame) & (predMatViz(:,1) >= iFrame - tail_size));
-        identities = predMatViz(rows, 2);
         
-        feetposition = feetPosition(predMatViz(rows,3:6));
-        is_TP = predMatViz(rows,end);
-        current_tail_colors = [];
-        for kkk = 1:length(is_TP)
-            current_tail_colors(kkk,:) = tail_colors(is_TP(kkk)+1,:);
-        end
+        % IDFN (missed trajectories)
         
-        circles = feetposition;
-        circles(:,3) = 3;
-        image = insertShape(image,'FilledCircle',circles,'Color', current_tail_colors*255);
-        
-        % IDFN
-        rows = find((gtMatViz(:, 1) <= iFrame) & (gtMatViz(:,1) >= iFrame - tail_size));
-        feetposition = feetPosition(gtMatViz(rows,3:6));
-        
+        rows        = find(gtMatViz(:, 1) == iFrame);
+        identities  = gtMatViz(rows, 2); % gt idendities are not the same as pred's
+        positions   = gtMatViz(rows,3:6);
         is_TP = gtMatViz(rows,end);
-        current_tail_colors = [];
-        for kkk = 1:length(is_TP)
-            current_tail_colors(kkk,:) = tail_colors(3-is_TP(kkk),:);
-        end
-        circles = feetposition;
-        circles(:,3) = 3;
-        image = insertShape(image,'FilledCircle',circles(~is_TP,:),'Color', current_tail_colors(~is_TP,:)*255);
-        image = insertText(image,[0 0], sprintf('Cam %d - Frame %d',iCam, iFrame),'FontSize',20);
-        image = insertText(image,[0 40; 60 40; 120 40], {'IDTP', 'IDFP','IDFN'},'FontSize',20,'BoxColor',{'green','blue','black'},'TextColor',{'white','white','white'});
         
-        writeVideo(video, image);
+        [num_of_pos, dontcare] = size(positions);
+        
+        if ~isempty(positions) 
+            for index = 1:num_of_pos
+                identity = identities(index);
+                position = positions(index,:);
+                
+                if is_TP(index) == 0
+                    fprintf('%06d-%02d: %05d - %04.0f, %04.0f - %04.0f, %04.0f - %s \n' ,iFrame, iCam, identity, position(:,1), position(:,2), position(:,3), position(:,4), 'IDFN' );
+                end
+            end
+        end
+        
         
     end
-    close(video);
     
 end
 
