@@ -21,7 +21,9 @@ load(fullfile(opts.dataset_path, 'ground_truth', 'trainval.mat'));
 for iCam = 1:opts.num_cam
     
     % Create csv
-    filename = sprintf('%s/%s/%s/cam%d_%s.csv',opts.experiment_root, opts.experiment_name, folder, iCam, opts.sequence_names{opts.sequence});
+    csv_name = sprintf('%s/%s/%s/cam%d_%s.csv',opts.experiment_root, opts.experiment_name, folder, iCam, opts.sequence_names{opts.sequence});
+    csv_file = fopen(csv_name,'wt');
+    fprintf(csv_file, 'frame, camera, identity, x, y, w, h, type\n');
     
     % Load result
     predMat = dlmread(sprintf('%s/%s/L2-trajectories/cam%d_%s.txt',opts.experiment_root, opts.experiment_name, iCam,opts.sequence_names{opts.sequence}));
@@ -43,7 +45,7 @@ for iCam = 1:opts.num_cam
     predMatViz = sortrows(predMatViz, [1 2]);
 
     for iFrame = global2local(opts.start_frames(iCam), sequence_interval(1)):1:global2local(opts.start_frames(iCam),sequence_interval(end))
-        % fprintf('Cam %d:  %d/%d\n', iCam, iFrame, global2local(opts.start_frames(iCam),sequence_interval(end)));
+        fprintf('Cam %d:  %d/%d\n', iCam, iFrame, global2local(opts.start_frames(iCam),sequence_interval(end)));
         if mod(iFrame,5) >0
             continue;
         end
@@ -63,13 +65,13 @@ for iCam = 1:opts.num_cam
                 identity = identities(index);
                 position = positions(index,:);
                 
-                is_true_postive = "IDFP";
-                
-                if is_TP(index) == 1
-                    is_true_postive = "IDTP";
+                type = "IDTP";
+                if is_TP(index) == 0
+                    type = "IDFP";
                 end
                 
-                fprintf('%06d-%02d: %05d - %04.0f, %04.0f - %04.0f, %04.0f - %s \n' ,iFrame, iCam, identity, position(:,1), position(:,2), position(:,3), position(:,4), is_true_postive );
+                % fprintf('%06d-%02d: %05d - %04.0f, %04.0f - %04.0f, %04.0f - %s\n' ,iFrame, iCam, identity, position(:,1), position(:,2), position(:,3), position(:,4), type );
+                fprintf(csv_file, '%06d, %02d, %05d, %04.0f, %04.0f, %04.0f, %04.0f, %s\n' ,iFrame, iCam, identity, position(:,1), position(:,2), position(:,3), position(:,4), type );
             end
         end
         
@@ -89,13 +91,16 @@ for iCam = 1:opts.num_cam
                 position = positions(index,:);
                 
                 if is_TP(index) == 0
-                    fprintf('%06d-%02d: %05d - %04.0f, %04.0f - %04.0f, %04.0f - %s \n' ,iFrame, iCam, identity, position(:,1), position(:,2), position(:,3), position(:,4), 'IDFN' );
+                    type = "IDFN";
+                    % fprintf('%06d-%02d: %05d - %04.0f, %04.0f - %04.0f, %04.0f - %s\n' ,iFrame, iCam, identity, position(:,1), position(:,2), position(:,3), position(:,4), type );
+                    fprintf(csv_file, '%06d, %02d, %05d, %04.0f, %04.0f, %04.0f, %04.0f, %s\n' ,iFrame, iCam, identity, position(:,1), position(:,2), position(:,3), position(:,4), type );
                 end
             end
         end
-        
-        
     end
-    
+        
+    disp('saving csv file...');
+    fclose(csv_file);
+    disp('saved.');
 end
 
