@@ -1,11 +1,17 @@
 function compute_L3_identities(opts)
 % Computes multi-camera trajectories from single-camera trajectories
 
-trajectories = loadL2trajectories(opts);
-trajectories = getTrajectoryFeatures(opts, trajectories);
+
 filename = sprintf('%s/%s/L3-identities/L2trajectories_%s.mat',opts.experiment_root, opts.experiment_name, opts.sequence_names{opts.sequence});
-save(filename,'trajectories');
-%  load(filename);
+    
+if opts.identities.extract_images
+    trajectories = loadL2trajectories(opts);
+    trajectories = getTrajectoryFeatures(opts, trajectories);
+    save(filename,'trajectories');
+else
+    load(filename,'trajectories');
+end
+
 identities = trajectories;
 
 for k = 1:length(identities)

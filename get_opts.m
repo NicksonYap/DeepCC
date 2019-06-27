@@ -64,6 +64,7 @@ identities.speed_limit = 30;
 identities.indifference_time = 150;
 identities.threshold = 8;
 identities.extract_images = true;
+identities.get_trajectory_features = true;
 
 % CNN model
 net = [];
