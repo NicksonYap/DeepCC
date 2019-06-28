@@ -49,7 +49,7 @@ for i = 1 : length(allGroups)
     correlationMatrix(sameLabels) = 1;
     
     % show appearance group tracklets
-    if opts.visualize, trajectoriesVisualizePart2; end
+    if opts.visualize_all || opts.visualize_L2_appearance_group_tracklets, trajectoriesVisualizePart2; end
     
     % solve the optimization problem
     solutionTime = tic;

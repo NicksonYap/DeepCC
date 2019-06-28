@@ -26,7 +26,7 @@ estimatedVelocity       = estimateVelocities(originalDetections, startFrame, end
 spatialGroupIDs         = getSpatialGroupIDs(opts.use_groupping, currentDetectionsIDX, detectionCenters, params);
 
 % Show window detections
-if opts.visualize, trackletsVisualizePart1; end
+if opts.visualize_all || opts.visualize_L1_window_detections, trackletsVisualizePart1; end
 
 %% SOLVE A GRAPH PARTITIONING PROBLEM FOR EACH SPATIAL GROUP
 fprintf('Creating tracklets: solving space-time groups ');
@@ -51,7 +51,7 @@ for spatialGroupID = 1 : max(spatialGroupIDs)
     correlationMatrix(impMatrix==1) = -inf;
     
     % Show spatial grouping and correlations
-    % if opts.visualize, trackletsVisualizePart2; end
+    if opts.visualize_all || opts.visualize_L1_spatial_grouping_and_correlations, trackletsVisualizePart2; end
     
     % Solve the graph partitioning problem
     fprintf('%d ',spatialGroupID);
@@ -71,7 +71,7 @@ for spatialGroupID = 1 : max(spatialGroupIDs)
     originalDetections(spatialGroupObservations, 2) = identities;
     
     % Show clustered detections
-    if opts.visualize, trackletsVisualizePart3; end
+    if opts.visualize_all || opts.visualize_L1_clustered_detections, trackletsVisualizePart3; end
 end
 fprintf('\n');
 
@@ -94,7 +94,7 @@ if ~isempty(smoothedTracklets)
 end
 
 % Show generated tracklets in window
-if opts.visualize, trackletsVisualizePart4; end
+if opts.visualize_all || opts.visualize_L1_generated_tracklets_in_window, trackletsVisualizePart4; end
 
 if ~isempty(tracklets)
     tracklets = nestedSortStruct(tracklets,{'startFrame','endFrame'});

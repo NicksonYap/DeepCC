@@ -28,8 +28,8 @@ for i = 1 : length(currentIdentities)
 end
 inAssociation = logical(inAssociation);
 
-% show all tracklets
-% if VISUALIZE, trajectoriesVisualizePart1; end
+% show all tracklets %disabled, because there's multiple cameras, might also have been visualised in L2
+% if opts.visualize_all || opts.visualize_L3_all_tracklets, trajectoriesVisualizePart1; end
 
 % solve the graph partitioning problem for each appearance group
 result = solveInGroupsIdentities(opts, trajectories(inAssociation), trajectoryLabels(inAssociation));

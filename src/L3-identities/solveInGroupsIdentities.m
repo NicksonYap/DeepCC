@@ -1,4 +1,4 @@
-function result = solveInGroupsIdentities(opts, trajectories, labels, VISUALIZE)
+function result = solveInGroupsIdentities(opts, trajectories, labels)
 
 global identitySolverTime;
 
@@ -64,8 +64,8 @@ for i = 1 : length(allGroups)
     
     correlationMatrix(sameLabels) = 100;
     
-    % show appearance group tracklets
-%     if VISUALIZE, trajectoriesVisualizePart2; end
+    % show appearance group tracklets % disabled, as it doesn't really make sense
+    % if opts.visualize_all || opts.visualize_L3_appearance_group_tracklets, tracklets = trajectories; trajectoriesVisualizePart2; end
     
     % solve the optimization problem
     solutionTime = tic;

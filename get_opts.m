@@ -13,7 +13,18 @@ opts.reader = DukeVideoReader(opts.dataset_path);
 
 % General settings
 opts.eval_dir = 'L3-identities';
-opts.visualize = false;
+
+opts.visualize_all = false;
+
+opts.visualize_L1_window_detections = false;
+opts.visualize_L1_spatial_grouping_and_correlations = false;
+opts.visualize_L1_clustered_detections = false;
+opts.visualize_L1_generated_tracklets_in_window = false;
+
+opts.visualize_L2_all_tracklets = false;
+opts.visualize_L2_merged_tracklets_in_window = false;
+opts.visualize_L2_appearance_group_tracklets = false;
+
 opts.image_width = 1920;
 opts.image_height = 1080;
 opts.current_camera = -1;

@@ -33,7 +33,7 @@ end
 inAssociation = logical(inAssociation);
 
 % show all tracklets
-if opts.visualize, trajectoriesVisualizePart1; end
+if opts.visualize_all || opts.visualize_L2_all_tracklets, trajectoriesVisualizePart1; end
 
 % solve the graph partitioning problem for each appearance group
 result = solveInGroups(opts, tracklets(inAssociation), trackletLabels(inAssociation));
@@ -58,7 +58,7 @@ outputTrajectories(currentTrajectoriesInd) = [];
 outputTrajectories = [outputTrajectories; smoothTrajectories'];
 
 % show merged tracklets in window 
-if opts.visualize, trajectoriesVisualizePart3; end
+if opts.visualize_all || opts.visualize_L2_merged_tracklets_in_window, trajectoriesVisualizePart3; end
 
 end
 

@@ -10,7 +10,17 @@ end
 
 %% Run Tracker
 
-% opts.visualize = true;
+% opts.visualize_all = false;
+
+% opts.visualize_L1_window_detections = true;
+% opts.visualize_L1_spatial_grouping_and_correlations = true;
+% opts.visualize_L1_clustered_detections = true;
+% opts.visualize_L1_generated_tracklets_in_window = true;
+
+% opts.visualize_L2_all_tracklets = true;
+% opts.visualize_L2_merged_tracklets_in_window = true;
+% opts.visualize_L2_appearance_group_tracklets = true;
+
 opts.sequence = 2; % trainval-mini
 
 % Tracklets

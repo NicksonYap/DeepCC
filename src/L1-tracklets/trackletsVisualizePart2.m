@@ -7,10 +7,10 @@ rows = find(spatialGroupIDs == spatialGroupID);
 figure(2);
 
 % draw bounding box
-minx = min(detectionCentersImage(rows,1));
-maxx = max(detectionCentersImage(rows,1));
-miny = min(detectionCentersImage(rows,2));
-maxy = max(detectionCentersImage(rows,2));
+minx = min(detectionCenters(rows,1));
+maxx = max(detectionCenters(rows,1));
+miny = min(detectionCenters(rows,2));
+maxy = max(detectionCenters(rows,2));
 
 x = minx - 40;
 y = miny - 40;
@@ -34,14 +34,13 @@ for kk = min(labels):min(labels)
     pairs_i = pairs(:,1);
     pairs_j = pairs(:,2);
     
-    points1 = detectionCentersImage(rrows(pairs_i),:);
-    points2 = detectionCentersImage(rrows(pairs_j),:);
+    points1 = detectionCenters(rrows(pairs_i),:);
+    points2 = detectionCenters(rrows(pairs_j),:);
     
     points1top = detectionCenters(rrows(pairs_i),:);
     points2top = detectionCenters(rrows(pairs_j),:);
     
-    myColorMap = NegativeEnhancingColormap(128, [-1 1], ...
-        [0 0 1], [1 0 0], 1);
+    myColorMap = NegativeEnhancingColormap(128, [-1 1], [0 0 1], [1 0 0], 1);
     
     if size(pairs,1) >2
         for p = 1 : length(pairs)
@@ -50,7 +49,8 @@ for kk = min(labels):min(labels)
             ptstop = [ points1top(p,:); points2top(p,:) ];
             correlation = correlationMatrix(pairs_i(p),pairs_j(p));
             colorindex = int32( 1 + (1 + correlation) * 63 );
-            
+            colorindex = max(colorindex,1);
+            colorindex = min(colorindex, 128);
             
             if correlation<-1
                 linecolor = [0 0 0];
